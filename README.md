@@ -1,7 +1,8 @@
 qlx
 ===
 
-EOS Lighting Console control for QLab
+###EOS Lighting Console control for QLab
+
 Documentation available at www.qlx.io
 
 Starting with software version 1.9.5, EOS and ION consoles could receive commands over UDP serial. At its simplest, this can just be a laptop connected to the console via ethernet cable, or a wireless access point can be connected to the console allowing for wireless control.
