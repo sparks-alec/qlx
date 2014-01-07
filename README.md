@@ -35,8 +35,9 @@ Start by downloading QLX- you'll get QLXdemo.cues and QLX.scpt. Open QLXdemo.cue
 - String RX Port
 - Folder path to QLX.scpt, colon-separated. It should look like this:
 
-
-    Macintosh HD:Users:User Name:Desktop:QLX.scpt
+```
+Macintosh HD:Users:User Name:Desktop:QLX.scpt
+```
 Make sure you don't change the Cue Number or Script, just the Name.
 
 Connect the computer to the EOS console, either via an ethernet cable or WiFi via a wireless access point connected to the console via ethernet.
@@ -48,7 +49,9 @@ QLX Syntax
 
 Every QLX cue is a QLab Script Cue. The Script of the Cue should be this snippet. The Cue's functionality is modified by renaming it, you don't have to touch any code.
 
-    run script file (q name of cue "LXPATH" in front workspace)
+```apple
+run script file (q name of cue "LXPATH" in front workspace)
+```
 
 QLXGO Cues are for easily running specific cues. The cue is run from the Default Cue List configured in LXConfig.
 
