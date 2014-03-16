@@ -23,59 +23,37 @@ tell application "QLab"
 			set Debug to false
 			if (offset of "DEBUG" in Cue_Name) is greater than 0 then set Debug to true
 			
-			--QLXSET
-			if ((characters 1 thru 7 of Cue_Basename) as string) is "QLXSET " then
+			--No Cue Number supplied. Basic GO
+			if (Cue_Basename is "QLXGO") then
 				
-				set Parameters to ((characters 8 thru -1 of Cue_Basename) as string)
-				set Sett to first item of (my splitString(Parameters, " "))
-				set Val to second item of (my splitString(Parameters, " ")) as string
+				set Complete_Script to Prep & "Cue " & Console_Cue_List & Append
 				
-				if (Sett is "CueList") then
-					set q name of cue "QLXLIST" to Val
-				else if (Sett is "Port") then
-					set q name of cue "QLXPORT" to Val
-				else if (Sett is "IP") then
-					set q name of cue "QLXIP" to Val
-				else if (Sett is "Path") then
-					set Val to ((characters 6 thru -1 of Parameters) as string)
-					set q name of cue "QLXPATH" to Val
-				end if
+				--Go to Cue Number specfied
+			else if ((characters 1 thru 6 of Cue_Basename) as string) is "QLXGO " then
 				
-			else
+				set Parameters to ((characters 7 thru -1 of Cue_Basename) as string)
+				set Complete_Script to Prep & "Cue " & Console_Cue_List & " " & Parameters & Append
 				
-				--No Cue Number supplied. Basic GO
-				if (Cue_Basename is "QLXGO") then
-					
-					set Complete_Script to Prep & "Cue " & Console_Cue_List & Append
-					
-					--Go to Cue Number specfied
-				else if ((characters 1 thru 6 of Cue_Basename) as string) is "QLXGO " then
-					
-					set Parameters to ((characters 7 thru -1 of Cue_Basename) as string)
-					set Complete_Script to Prep & "Cue " & Console_Cue_List & " " & Parameters & Append
-					
-					--Command. Prepend '$ '
-				else if ((characters 1 thru 5 of Cue_Basename) as string) is "QLXC " then
-					
-					set Parameters to ((characters 6 thru -1 of Cue_Basename) as string)
-					set Complete_Script to Prep & "$ " & Parameters & Append
-					
-					--EOS Events
-				else if ((characters 1 thru 4 of Cue_Basename) as string) is "QLX " then
-					
-					set Parameters to ((characters 5 thru -1 of Cue_Basename) as string)
-					set Complete_Script to Prep & Parameters & Append
-					
-				end if
+				--Command. Prepend '$ '
+			else if ((characters 1 thru 5 of Cue_Basename) as string) is "QLXC " then
 				
-				do shell script Complete_Script & "&> /dev/null&"
+				set Parameters to ((characters 6 thru -1 of Cue_Basename) as string)
+				set Complete_Script to Prep & "$ " & Parameters & Append
 				
-				if Debug then
-					display dialog Complete_Script
-				end if
+				--EOS Events
+			else if ((characters 1 thru 4 of Cue_Basename) as string) is "QLX " then
+				
+				set Parameters to ((characters 5 thru -1 of Cue_Basename) as string)
+				set Complete_Script to Prep & Parameters & Append
 				
 			end if
 			
+			do shell script Complete_Script & "&> /dev/null&"
+			
+			if Debug then
+				display dialog Complete_Script
+			end if
+
 			
 		on error Error_Message number Error_Number
 			set Error_Append to " Fix and click \"Compile Script\"" & Error_Number
