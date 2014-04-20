@@ -1,4 +1,4 @@
-qlx
+qlx v1.2
 ===
 
 ###EOS Lighting Console control for QLab
