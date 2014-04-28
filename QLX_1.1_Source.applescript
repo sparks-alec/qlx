@@ -1,4 +1,5 @@
-# QLX version 1.0
+# QLX version 1.1
+# www.qlx.io
 # by Alec Sparks
 # alecsparks.com
 
@@ -24,7 +25,7 @@ tell application "QLab"
 			if (offset of "DEBUG" in Cue_Name) is greater than 0 then set Debug to true
 			
 			--QLXSET
-			if ((characters 1 thru 7 of Cue_Basename) as string) is "QLXSET " then
+			if ((length of Cue_Basename is greater than 7) and ((characters 1 thru 7 of Cue_Basename) as string) is "QLXSET ") then
 				
 				set Parameters to ((characters 8 thru -1 of Cue_Basename) as string)
 				set Sett to first item of (my splitString(Parameters, " "))
