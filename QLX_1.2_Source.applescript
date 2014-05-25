@@ -1,18 +1,17 @@
-# QLX version 1.0
+# QLX version 1.2
+# www.qlx.io
 # by Alec Sparks
 # alecsparks.com
 
 tell application "QLab"
 	tell front workspace
 		
-		try --check if QLX.scpt is running from QLab
-			set Last_Cue to last item of (active cues as list)
-		on error
-			error "QLX can only be used in the context of a QLab Script Cue."
-		end try
+		set Ordered_Cues_List to my Sort_Cues(active cues as list)
+		
 		
 		try
-			set Cue_Name to (q name of Last_Cue) as string
+			set Cue_Name to (q name of (first item of Ordered_Cues_List)) as string
+			
 			set Console_Cue_List to q name of cue "QLXLIST"
 			set Cue_Basename to (characters (offset of "QLX" in Cue_Name) thru -1 of Cue_Name) as string --trim off comments
 			
@@ -20,11 +19,9 @@ tell application "QLab"
 			set Prep to "echo \""
 			set Complete_Script to ""
 			
-			set Debug to false
-			if (offset of "DEBUG" in Cue_Name) is greater than 0 then set Debug to true
 			
 			--QLXSET
-			if ((characters 1 thru 7 of Cue_Basename) as string) is "QLXSET " then
+			if (length of Cue_Basename is greater than 7) and ((characters 1 thru 7 of Cue_Basename) as string) is "QLXSET " then
 				
 				set Parameters to ((characters 8 thru -1 of Cue_Basename) as string)
 				set Sett to first item of (my splitString(Parameters, " "))
@@ -70,12 +67,11 @@ tell application "QLab"
 				
 				do shell script Complete_Script & "&> /dev/null&"
 				
-				if Debug then
+				if (Cue_Name contains "DEBUG") then
 					display dialog Complete_Script
 				end if
 				
 			end if
-			
 			
 		on error Error_Message number Error_Number
 			set Error_Append to " Fix and click \"Compile Script\"" & Error_Number
@@ -86,6 +82,7 @@ tell application "QLab"
 				error Error_Message & Error_Number
 			end if
 		end try
+		
 		
 	end tell --Workspace
 end tell --Qlab
@@ -98,3 +95,45 @@ on splitString(aString, delimiter)
 	set AppleScript's text item delimiters to prevDelimiter
 	return retVal
 end splitString
+
+
+#Sort Cues by prewait, lowest to highest.
+#Adapted from Simple Sort by http://www.macosxautomation.com/applescript/sbrt/sbrt-05.html
+
+on Sort_Cues(Active_Cues_List)
+	
+	tell application "QLab"
+		tell front workspace
+			
+			set index_list to {}
+			set sorted_list to {}
+			repeat (the number of items in Active_Cues_List) times #necessary to remove non-QLX cues from the new list, otherwise we could simply stop after one iteration
+				set the low_item to ""
+				set low_item_orig to ""
+				repeat with i from 1 to (number of items in Active_Cues_List)
+					if (i is not in the index_list) then
+						set this_item_orig to item i of Active_Cues_List
+						set this_item to (pre wait of item i) of Active_Cues_List as number
+						if the low_item is "" then
+							set the low_item to this_item
+							set low_item_orig to this_item_orig
+							set the low_item_index to i
+						else if this_item comes before the low_item then
+							set the low_item to this_item
+							set low_item_orig to this_item_orig
+							set the low_item_index to i
+						end if
+					end if
+				end repeat
+				if ((q type of low_item_orig as string) is "Script") then # TODO: Confirm it's a QLX cue
+					set the end of sorted_list to the low_item_orig
+				end if
+				set the end of the index_list to the low_item_index
+			end repeat
+			
+			return sorted_list
+			
+		end tell
+	end tell
+	
+end Sort_Cues
