@@ -2,6 +2,7 @@
 # www.qlx.io
 # by Alec Sparks
 # alecsparks.com
+# provided under MIT License
 
 tell application "QLab"
 	tell front workspace
@@ -125,7 +126,7 @@ on Sort_Cues(Active_Cues_List)
 						end if
 					end if
 				end repeat
-				if ((q type of low_item_orig as string) is "Script") then # TODO: Confirm it's a QLX cue
+				if ((q type of low_item_orig as string) is "Script" and (q name of low_item_orig as string) contains "QLX") then
 					set the end of sorted_list to the low_item_orig
 				end if
 				set the end of the index_list to the low_item_index
